@@ -82,7 +82,7 @@ function getCustomer(customer){
         `<td>${customer.email}</td>`+
         `<td >${customer.address.name}</td>`+
         `<td>`+
-        `<a href="#formEditCustomer" class="edit" onclick="editForm(this)" id="${customer.id}" data-toggle="modal">`+
+        `<a href="#formEditCustomer" class="edit" onclick="editForm(this)"  id="${customer.id}" data-toggle="modal">`+
         `<i class="material-icons"  data-toggle="tooltip" title="Edit">&#xE254;</i>`+
         `</a>`+
         `<a href="#deleteCustomer" onclick="getFormDelete(this)" class="delete" id="${customer.id}" data-toggle="modal">`+
@@ -124,6 +124,7 @@ function deleteCustomer(a){
 function editForm(a){
     let id = a.getAttribute("id");
     $.ajax({
+        async:false,
         type:"GET",
         url: 'http://localhost:8080/customers/findOne/'+ id,
         headers:{
@@ -131,84 +132,42 @@ function editForm(a){
             "Content-type": "application/json"
         },
         success:function (data){
-            let img = "img/" + data.image;
-            getAddress('addressEdit', data.address.id)
-            let address = document.getElementById('addressEdit').innerHTML
-            alert(address)
-            let content = `<div class="modal-header">`+
-                `<h4 class="modal-title">Edit</h4>`+
-                `<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>`+
-                `</div>`+
-                `<div class="modal-body">`+
-                `<div class="form-group" hidden>`+
-                `<label>id</label>`+
-                `<input type="text" value="${data.id}" class="form-control" required id="customerId">`+
-                `</div>`+
-                `<div class="form-group">`+
-                `<label>Name</label>`+
-                `<input type="text" class="form-control" required id="name2" value="${data.name}">`+
-                `</div>`+
+            getAddress('address2', data.address.id);
+                let img = "img/" + data.image;
 
-                `<img width="100" height="100" src="${img}" alt="Chưa có ảnh">`+
-                `<div class="form-group">`+
+                let content =
+                    `<div class="form-group" hidden>`+
+                    `<label>id</label>`+
+                    `<input type="text" value="${data.id}" class="form-control" required id="customerId">`+
+                    `</div>`+
+                    `<div class="form-group">`+
+                    `<label>Name</label>`+
+                    `<input type="text" class="form-control" required id="name2" value="${data.name}">`+
+                    `</div>`+
+
+                    `<img width="100" height="100" src="${img}" alt="Chưa có ảnh">`+
+                    `<div class="form-group">`+
                     `<label>Image</label>`+
-                `<input type="text"  value="${data.image}" hidden id="image2">`+
+                    `<input type="text"  value="${data.image}" hidden id="image2">`+
                     `<input type="file" class="form-control" name="image2"  id="file2">`+
-                `</div>`+
+                    `</div>`+
 
-                `<div class="form-group">`+
-                `<label>Email</label>`+
-                `<input type="text" class="form-control" required id="email2" value="${data.email}">`+
-                `</div>`+
-                `<div class="form-group">`+
-                `<label>Address</label>`+
-                `<select name="address" id="address2">`+
-                address+
-                `</select>`+
+                    `<div class="form-group">`+
+                    `<label>Email</label>`+
+                    `<input type="text" class="form-control" required id="email2" value="${data.email}">`+
+                    `</div>`
+                document.getElementById('customerEdit').innerHTML= content;
 
-                `</div>`+
-                `</div>`+
-                `<div class="modal-footer">`+
-                `<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">`+
-                `<input type="submit" class="btn btn-success" onclick="edit()" value="save">`+
-                `</div>`
-            document.getElementById('editCustomer').innerHTML= content;
+
+
+
         },
 
     })
 
 }
-function customerEdit(customer){
-    return `<div class="modal-header">`+
-        `<h4 class="modal-title">Edit</h4>`+
-        `<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>`+
-        `</div>`+
-        `<div class="modal-body">`+
-        `<div class="form-group" hidden>`+
-        `<label>id</label>`+
-        `<input type="text" value="${customer.id}" class="form-control" required id="customerId">`+
-        `</div>`+
-        `<div class="form-group">`+
-        `<label>Name</label>`+
-        `<input type="text" class="form-control" required id="name2" value="${customer.name}">`+
-        `</div>`+
-        `<div class="form-group">`+
-        `<label>Email</label>`+
-        `<input type="text" class="form-control" required id="email2" value="${customer.email}">`+
-        `</div>`+
-        `<div class="form-group">`+
-        `<label>Address</label>`+
-        `<select name="address" id="address">`+
 
-        `</select>`+
 
-        `</div>`+
-        `</div>`+
-        `<div class="modal-footer">`+
-        `<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">`+
-        `<input type="submit" class="btn btn-success" onclick="edit()" value="save">`+
-        `</div>`
-}
 function getAddress(id, addressId){
     // let content =  document.getElementById('address').innerHTML
     // return content;
@@ -229,6 +188,7 @@ function getAddress(id, addressId){
         }
 
     })
+    return true
 }
 function edit(){
     let id = $('#customerId').val();
@@ -282,7 +242,7 @@ function edit(){
 function getPage(page){
     if ( page.totalPages > (page.pageable.pageNumber + 1) ){
         return `<ul class="pagination">`+
-            `<li class="page-item disabled">`+
+            `<li class="page-item">`+
             `<a href="${page.pageable.pageNumber - 1}" onclick="page(this)">Previous</a>`+
             `</li>`+
             `<li class="page-item"><span>${page.pageable.pageNumber + 1}</span>/`+
