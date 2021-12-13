@@ -153,7 +153,7 @@ function editForm(a){
                 `<div class="form-group">`+
                     `<label>Image</label>`+
                 `<input type="text"  value="${data.image}" hidden id="image2">`+
-                    `<input type="file" class="form-control" name="image2" required id="file2">`+
+                    `<input type="file" class="form-control" name="image2"  id="file2">`+
                 `</div>`+
 
                 `<div class="form-group">`+
@@ -162,7 +162,7 @@ function editForm(a){
                 `</div>`+
                 `<div class="form-group">`+
                 `<label>Address</label>`+
-                `<select name="address" id="address">`+
+                `<select name="address" id="address2">`+
                 address+
                 `</select>`+
 
@@ -235,25 +235,45 @@ function edit(){
     let name = $('#name2').val();
     let email = $('#email2').val();
     let address = $('#address2').val();
-    let img = $('#file2')[0].files[0];
+    let c = $('#file2').val();
     let image = $('#image2').val()
-    let fd = new FormData();
-    fd.append("file", img)
-    let customer = {id: id, name: name, email: email, address: {id:address}, image:image};
-    fd.append("customer", JSON.stringify(customer));
 
 
-    $.ajax({
-        url:"http://localhost:8080/customers/create",
-        data: fd,
-        contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
-        processData: false,
-        type:"POST",
-        headers: {'Content-Type': undefined},
+    if ($('#file2').val() != ""){
+        let img = $('#file2')[0].files[0];
+        let fd = new FormData();
+        fd.append("file", img)
+        let customer = {id: id, name: name, email: email, address: {id:address}};
+        fd.append("customer", JSON.stringify(customer));
+        $.ajax({
+            url:"http://localhost:8080/customers/create",
+            data: fd,
+            contentType: false, // NEEDED, DON'T OMIT THIS (requires jQuery 1.6+)
+            processData: false,
+            type:"POST",
+            headers: {'Content-Type': undefined},
 
-        success: getHome
+            success: getHome
 
-    })
+        })
+    }
+    else {
+        let customer = {id: id, name: name, email: email, address: {id:address}, image:image};
+        $.ajax({
+            type:"PUT",
+            url:'http://localhost:8080/customers/edit/'+ id,
+            data:JSON.stringify(customer),
+            headers:{
+                "Accept": "application/json",
+                "Content-type": "application/json"
+            },
+            success:getHome
+        })
+    }
+
+
+
+
     $('#formEditCustomer').modal('hide');
     event.preventDefault();
 
