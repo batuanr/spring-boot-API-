@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!--  <script src="style.js"></script>-->
+    <link rel="stylesheet" href="customer.css">
+</head>
+<body><img src="img/iphone11.jpeg" height="214" width="214"/>
+sádfd
+<tbody id="customer">
+<img src="img/iphone11.jpeg" height="214" width="214"/>
+</tbody>
+
+
+<button onclick="getall()">df</button>
+<select id="address" name="address">
+    <script>getAddress()</script>
+</select>
+<script>
+
+    function getAddress(){
+        // let content =  document.getElementById('address').innerHTML
+        // return content;
+        $.ajax({
+            type:"GET",
+            url:'http://localhost:8080/api/address',
+            success: function (data){
+                alert(data[1].name)
+                let content = "";
+                for (let i = 0; i < data.length; i++) {
+                    content += `<option value="${data[i].id}" >${data[i].name}</option>`
+                }
+                document.getElementById('address').innerHTML = content;
+            }
+
+        })
+    }
+    function getall(){
+        $.ajax({
+            type: "GET",
+            url: 'http://localhost:8080/customers',
+            success : function (data){
+                alert(data.content[0].image)
+                let content = "";
+                for (let i = 0; i < data.content.length; i++){
+
+                    content += '<tr><td>' +
+                        '<span class="custom-checkbox">'+
+                        '<input type="checkbox" id="checkbox1" name="options[]" value="1">'+
+                        '<label  for="checkbox1"></label>'+
+                        '</span>'+
+                        '</td>'+
+                        getCustomer(data.content[i])
+                }
+                document.getElementById('customer').innerHTML = content;
+                document.getElementById('page').innerHTML = getPage(data);
+
+            }
+        })
+    }
+
+</script>
+<script >
+
+    document.addEventListener("DOMContentLoaded", () => {
+getAddress()
+
+    });
+</script>
+
+</body>
+</html>
